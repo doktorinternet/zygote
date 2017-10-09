@@ -8,11 +8,11 @@ import states.StartGameState;
 
 public class Main extends StateBasedGame{
 
-    public enum Orientation {NORTH, SOUTH, EAST, WEST}
 
     public Main(String title) {
         super(title);
     }
+
     public static void main(String[] args) throws SlickException {
         AppGameContainer app = new AppGameContainer(new Main("Zygote V0.1"));
         app.setDisplayMode(800, 600, false);
@@ -21,8 +21,8 @@ public class Main extends StateBasedGame{
 
     @Override
     public void initStatesList(GameContainer gameContainer) throws SlickException {
-        this.addState(new StartGameState());
+        //this.addState(new StartGameState());
         this.addState(new GameState());
-        this.addState(new GameOverState());
+        //this.addState(new GameOverState());
     }
 }

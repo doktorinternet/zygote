@@ -19,6 +19,9 @@ public class Node {
     // Default
     public Node(){}
 
+    public Shape getShape(){
+        return representation;
+    }
     public Rhythm rhythmOf(){
         return rhythm;
     }

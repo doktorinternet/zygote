@@ -25,7 +25,7 @@ public class StartGameState extends BasicGameState {
 
     @Override
     public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics graphics) throws SlickException {
-        graphics.drawString("Welcome to Zygote", gameContainer.getWidth()/2, gameContainer.getHeight()/2);
+        graphics.drawString("Welcome to Zygote",  gameContainer.getHeight()/2,gameContainer.getWidth()/2);
     }
 
     @Override

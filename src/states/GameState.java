@@ -40,14 +40,15 @@ public class GameState extends BasicGameState {
     public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics graphics)
             throws SlickException {
 
+        graphics.setColor(Color.green);
+        graphics.draw(core.shape);
+        graphics.fill(core.shape);
+
         graphics.setColor(Color.white);
         for (Bone bone : core.getLimbs()){
             graphics.fill(bone.getHusk());
         }
 
-        graphics.setColor(Color.magenta);
-        //graphics.draw(core.shape);
-        graphics.fill(core.shape);
     }
 
     @Override
