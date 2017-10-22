@@ -1,118 +1,147 @@
 package zygoteParts;
 
 import environment.Position;
+import helpers.InputHelper;
 import org.newdawn.slick.geom.Circle;
 import resource.Rhythm;
 
-public class Core extends Node implements Heavy{
+public class Core extends CircleNode implements Heavy {
 
-     final static int NORTH = 0;
-    final static  int SOUTH = 1;
-    final static  int EAST = 2;
-    final static  int WEST = 3;
-
-
-    public Circle shape;
-    private float minSize = 150/2, maxSize = minSize * 1.2f; // Diameter/2 = Radius for circle
-    private int downBeats;
-    Bone [] limbs;
+    Bone[] limbs;
+    int CREDITS = 501;
 
     // TODO FIX A LOT OF TEMPORARY VALUES EVERYWHERE!!! D:
     int type = 4; // 1-4
     int bpm = 120;
 
-    public Core(int x, int y){
+    public Core(int x, int y) {
 
-        position = new Position(x, y);
-        shape = new Circle(position.x,position.y,minSize);
-        representation = shape;
-        rhythm = new Rhythm(bpm); // TODO add variants in lifespan velocity
+        setMinSize(150/2);
+        setMaxSize(getMinSize()*GROWTH);
+        setPosition(new Position(x, y));
+        setShape(new Circle(getPosition().getX(), getPosition().getY(), getMinSize()));
+        setRhythm(new Rhythm(bpm)); // TODO add variants in lifespan velocity
         limbs = new Bone[type]; // TODO add core variants with more/less bone connectors
 
-        for( int i = 0; i < type; i++ ) {
-            limbs[i] = new Bone(this.position, i);
+        for (int i = 0; i < type; i++) {
+            limbs[i] = new Bone(getPosition(), i);
         }
 
     }
 
-    public Bone [] getLimbs(){
+    public Bone[] getLimbs() {
         return limbs;
     }
 
-    void setType(int type){ this.type = type;}
-
-    public Circle getShape() {
-        return shape;
+    void setType(int type) {
+        this.type = type;
     }
 
-    void reCenter(){
-        shape.setCenterX(position.x);
-        shape.setCenterY(position.y);
+    void reCenter() {
+        getShape().setCenterX(getPosition().getX());
+        getShape().setCenterY(getPosition().getY());
     }
 
-    public void beatUp(){
-        downBeats = 0;
-        reCenter();
-        shape.setRadius(maxSize);
-        reCenter();
-    }
-
-    public void beatDown(int delta){
-        reCenter();
-        float r = shape.getRadius();
-        shape.setRadius(r * (1f-(float)delta/2500f)); // delta 16 = 60 fps, 32 = 30 fps;
-        reCenter();
-    }
-
-    public int beat(int timePassed, int delta){
-        if (timePassed > rhythm.millisPerBeat()){ //
+    @Override
+    public int beat(int timePassed, int delta) {
+        if (timePassed > getRhythm().millisPerBeat()) {
             timePassed = 0;
-            beatUp();
+            beatUp(getMaxSize());
+            if(other % 2 == 0){
+                for (Bone b : limbs) {
+                    for (Wing wing : b.getWings()) {
+                        wing.beatUp(wing.getMaxSize());
+                    }
+                }
+            }
+            other++;
+
         }
-        if(downBeats % 2 == 0){
+        if (downBeats % 2 == 0) {
             beatDown(delta);
+        }else{
+            for (Bone b : limbs) {
+                for (Wing wing : b.getWings()) {
+                    wing.beatDown(delta);
+                }
+            }
         }
         downBeats++;
         return timePassed;
     }
 
     private Position setupSocketPositions(int orientation) {
-        switch(orientation){
+        switch (orientation) {
             case NORTH:
-                return new Position((int)shape.getCenterX(),
-                        (int)getSocketPosition(shape.getCenterY(),true),
+                return new Position((int) getShape().getCenterX(),
+                        (int) getSocketPosition(getShape().getCenterY(), true),
                         orientation);
             case SOUTH:
-                return new Position((int)shape.getCenterX(),
-                        (int)getSocketPosition(shape.getCenterY(),false),
+                return new Position((int) getShape().getCenterX(),
+                        (int) getSocketPosition(getShape().getCenterY(), false),
                         orientation);
             case EAST:
-                return new Position((int)getSocketPosition(shape.getCenterX(),true),
-                        (int)shape.getCenterY(),
+                return new Position((int) getSocketPosition(getShape().getCenterX(), true),
+                        (int) getShape().getCenterY(),
                         orientation);
             case WEST:
-                return new Position((int)getSocketPosition(shape.getCenterX(),false),
-                        (int)shape.getCenterY(),
+                return new Position((int) getSocketPosition(getShape().getCenterX(), false),
+                        (int) getShape().getCenterY(),
                         orientation);
             default:
                 return null;
         }
     }
 
-    private float getSocketPosition(float centerAxis, boolean positive){
-        float radius = shape.getRadius();
-        if(positive)
-            return centerAxis + (radius/4f)*3f;
+    private float getSocketPosition(float centerAxis, boolean positive) {
+        float radius = getShape().getRadius();
+        if (positive)
+            return centerAxis + (radius / 4f) * 3f;
         else
-            return centerAxis - (radius/4f)*3f;
+            return centerAxis - (radius / 4f) * 3f;
 
     }
 
-    private void sleep(){
-        try{
+    private void sleep() {
+        try {
             Thread.sleep(100);
-        }catch(InterruptedException e){
+        } catch (InterruptedException e) {
             System.exit(0);
+        }
+    }
+
+    int getLimb(Position rightMouseButtonClick) {
+        int ret = 0;
+        int[][] areas = new int[limbs.length - 1][2];
+        for (int i = 0; i < limbs.length - 1; i++) {
+            int index = 0;
+            areas[i][index] = (int) limbs[i].getHusk().getHeight();
+            areas[i][index + 1] = (int) limbs[i].getHusk().getWidth();
+        }
+        for (int i = 0; i < areas.length - 1; i++) {
+            for (int j = 0; j < areas[i].length - 1; j = j + 2) {
+                if (    rightMouseButtonClick.getX() + -10 >= areas[i][j] ||
+                        rightMouseButtonClick.getX() + -10 <= areas[i][j] &&
+                        rightMouseButtonClick.getY() + -10 >= areas[i][j + 1] ||
+                        rightMouseButtonClick.getY() + -10 <= areas[i][j + 1])
+                {
+                    ret = i;
+                }
+            }
+        }
+        return ret;
+    }
+
+    public void spawnWing(boolean buttonDown) {
+        if (buttonDown) {
+            Position mPos = InputHelper.getMPosDraw();
+            for (int i = 0; i < limbs.length - 1; i++) {
+                if (i == getLimb(mPos) && CREDITS > 500) {
+                    limbs[i].addWing(this);
+                    System.out.println("created a wing");
+                    CREDITS -= 500;
+                }
+            }
         }
     }
 }

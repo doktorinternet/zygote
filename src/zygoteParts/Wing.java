@@ -1,13 +1,52 @@
 package zygoteParts;
 
-public class Wing extends Node implements Light{
-    Node parent;
-    Node olderSibling;
-    Node youngerSibling;
-    Bone back;
+import environment.Position;
+import org.newdawn.slick.geom.Circle;
 
-    public Wing(){
+public class Wing extends CircleNode implements Light, Constants {
+    CircleNode parent;
+    CircleNode olderSibling;
+    CircleNode youngerSibling;
+    Bone backBone;
 
+    public Wing(CircleNode parent, Bone limb) {
+//        setRhythm(parent.getRhythm());
+        setMinSize(75 / 2);
+        setMaxSize(getMinSize()*GROWTH);
+
+        backBone = limb;
+        setParent(parent);
+        setPosition(new Position(backBone.getHusk().getCenterY(),
+                backBone.getHusk().getCenterX()));
+        setShape(new Circle(getPosition().getX(), getPosition().getY(), getMinSize()));
     }
+
+    /*public void setParent(CircleNode parent) {
+        this.parent = parent;
+        if(parent.equals(core)){
+            setBack(core.getLimbs());
+        }
+    }*/
+
+    void setOlderSibling() {
+    }
+
+    void setYoungerSibling() {
+    }
+
+    public void setParent(CircleNode parent) {
+        this.parent = parent;
+    }
+
+
+//    private boolean setBack(Bone[] limbs, int limb) {
+//        for(int i = 0; i < limbs.length-1; i++){
+//            if(i == limb){
+//                this.backBone = limbs[i];
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
 }

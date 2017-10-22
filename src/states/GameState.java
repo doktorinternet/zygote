@@ -6,18 +6,19 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 import zygoteParts.Bone;
-import zygoteParts.Core;
+import zygoteParts.Constants;
+import org.lwjgl.input.Mouse;
+import zygoteParts.Wing;
 
+public class GameState extends BasicGameState implements Constants {
 
-public class GameState extends BasicGameState {
-
-    private Core core;
+    private Wing[] wings;
+    private String mousePosition = "";
     private int timePassed;
 
     @Override
     public void init(GameContainer window, StateBasedGame stateBasedGame)
             throws SlickException {
-        core = new Core(window.getWidth()/2, window.getHeight()/2);
         timePassed = 0;
         window.setAlwaysRender(true);
         window.setTargetFrameRate(60); // TODO delta måste med i uträkningen någonstans
@@ -26,27 +27,35 @@ public class GameState extends BasicGameState {
     @Override
     public void update(GameContainer gameContainer, StateBasedGame sbg, int delta)
             throws SlickException {
-        if(gameContainer.getInput().isKeyPressed(Input.KEY_2)){
+        if (gameContainer.getInput().isKeyPressed(Input.KEY_2)) {
             sbg.enterState(2, new FadeOutTransition(), new FadeInTransition());
         }
-        core.shape.setCenterX(core.position.x);
-        core.shape.setCenterY(core.position.y);
+        core.getShape().setCenterX(core.getPosition().getX());
+        core.getShape().setCenterY(core.getPosition().getY());
+        mousePosition = "Mouse X: " + Mouse.getX() + " Y: " + Mouse.getY();
+        core.drag(Mouse.isButtonDown(0));
+        core.spawnWing(Mouse.isButtonDown(1));
 
         timePassed += delta;
         timePassed = core.beat(timePassed, delta);
+
     }
 
     @Override
     public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics graphics)
             throws SlickException {
-
+        graphics.drawString(mousePosition, 10, 30);
         graphics.setColor(Color.green);
-        graphics.draw(core.shape);
-        graphics.fill(core.shape);
+        graphics.draw(core.getShape());
+        graphics.fill(core.getShape());
 
-        graphics.setColor(Color.white);
-        for (Bone bone : core.getLimbs()){
+        for (Bone bone : core.getLimbs()) {
+            graphics.setColor(Color.white);
             graphics.fill(bone.getHusk());
+            for (Wing wing : bone.getWings()) {
+                graphics.setColor(Color.red);
+                graphics.fill(wing.getShape());
+            }
         }
 
     }

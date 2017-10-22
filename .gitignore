@@ -13,6 +13,7 @@
 .idea/dictionaries
 .idea/*
 .idea/vcs.xml
+.idea/
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
@@ -40,6 +41,7 @@ cmake-build-debug/
 
 # IntelliJ
 /out/
+out/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -62,7 +64,6 @@ fabric.properties
 ### Intellij+iml Patch ###
 # Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-249601023
 
-*.iml
 modules.xml
 .idea/misc.xml
 *.ipr
