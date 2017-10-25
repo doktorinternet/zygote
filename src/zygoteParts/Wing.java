@@ -4,14 +4,14 @@ import environment.Position;
 import org.newdawn.slick.geom.Circle;
 
 public class Wing extends CircleNode implements Light, Constants {
-    CircleNode parent;
+    private CircleNode parent;
     CircleNode olderSibling;
     CircleNode youngerSibling;
-    Bone backBone;
+    private Bone backBone;
 
     public Wing(CircleNode parent, Bone limb) {
 //        setRhythm(parent.getRhythm());
-        setMinSize(75 / 2);
+        setMinSize(75 / 2); // TODO create variable
         setMaxSize(getMinSize()*GROWTH);
 
         backBone = limb;
